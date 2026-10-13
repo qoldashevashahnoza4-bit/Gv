@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10-sinf fizika — II bob: Dinamika</title>
+<style>
+:root{--blue:#155eef;--ink:#172033;--muted:#586579;--bg:#f3f6fb;--card:#fff;--line:#dce4ef}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:linear-gradient(120deg,#123b79,#1769aa);color:#fff;padding:24px 16px}
+.wrap{max-width:1100px;margin:auto}h1{margin:0 0 6px;font-size:clamp(24px,4vw,36px)}header p{margin:0;opacity:.92}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+nav button,.btn{border:0;border-radius:10px;padding:10px 13px;background:#e4ecf8;color:#18345f;font-weight:700;cursor:pointer}
+nav button.active,.btn.primary{background:var(--blue);color:white}
+main{max-width:1100px;margin:0 auto;padding:0 16px 30px}.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px;margin:14px 0;box-shadow:0 4px 14px #19385d0a}
+h2{margin:0 0 10px;font-size:23px}h3{margin:10px 0 6px;font-size:17px}.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+canvas{display:block;width:100%;height:300px;background:#f8fbff;border:1px solid var(--line);border-radius:12px}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:12px 0}
+label{display:flex;align-items:center;gap:8px;flex-wrap:wrap}input[type=range]{width:145px}output{font-weight:bold;color:var(--blue)}
+.formula{background:#eef4ff;border-left:4px solid var(--blue);padding:10px 13px;border-radius:7px;font-size:18px}
+.note{background:#fff7df;border:1px solid #f0dda3;border-radius:10px;padding:12px}
+ul{padding-left:22px}footer{text-align:center;color:var(--muted);padding:18px}
+button:focus,input:focus{outline:3px solid #9fc0ff;outline-offset:2px}
+@media(max-width:600px){.card{padding:13px}canvas{height:260px}nav button{flex:1 1 45%}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>10-sinf fizika: II bob — DINAMIKA</h1>
+<p>Interaktiv simulyatsiyalar va animatsiyalar. Parametrlarni o‘zgartiring, harakatni kuzating va fizik qonunlarni tekshiring.</p>
+</div></header>
+<main>
+<nav aria-label="Mavzular">
+<button class="active" data-tab="t1">1. Dinamika qonunlari</button>
+<button data-tab="t2">2. Nisbiylik prinsipi</button>
+<button data-tab="t3">3. Gravitatsion maydon</button>
+<button data-tab="t4">4. Jism og‘irligi</button>
+<button data-tab="t5">5. Bir necha kuch</button>
+</nav>
+
+<section id="t1" class="panel active">
+<div class="card"><h2>1. Dinamika qonunlari</h2><p>Nyuton qonunlari kuch, massa va tezlanish orasidagi bog‘lanishni tushuntiradi.</p>
+<div class="formula">F<sub>nat</sub> = ma &nbsp; → &nbsp; a = F<sub>nat</sub>/m</div></div>
+<div class="card"><h3>Simulyatsiya: kuch ta’siridagi aravacha</h3><canvas id="c1" width="900" height="300"></canvas>
+<div class="controls"><label>Kuch F: <input id="f1" type="range" min="0" max="30" value="12"><output id="of1">12 N</output></label>
+<label>Massa m: <input id="m1" type="range" min="1" max="10" value="3"><output id="om1">3 kg</output></label>
+<button class="btn primary" id="reset1">Qayta boshlash</button></div>
+<p id="read1" class="muted"></p><p class="note">Kuchni oshirsangiz tezlanish ortadi; massani oshirsangiz, bir xil kuchda tezlanish kamayadi.</p></div>
+<div class="card"><h3>Animatsiya: Nyutonning uchinchi qonuni</h3><canvas id="third" width="900" height="220"></canvas><p class="muted">Ikki jism o‘zaro ta’sirlashganda, ta’sir kuchlari kattaligi teng va yo‘nalishi qarama-qarshi bo‘ladi.</p></div>
+</section>
+
+<section id="t2" class="panel">
+<div class="card"><h2>2. Galileyning nisbiylik prinsipi</h2><p>Mexanika qonunlari barcha inersial sanoq sistemalarida bir xil ko‘rinishda bajariladi. Harakat kuzatuvchi tanlagan sanoq sistemasiga nisbatan tavsiflanadi.</p>
+<div class="formula">v<sub>jism/yer</sub> = v<sub>jism/poyezd</sub> + v<sub>poyezd/yer</sub></div></div>
+<div class="card"><h3>Simulyatsiya: poyezd va yo‘lovchi</h3><canvas id="c2" width="900" height="300"></canvas>
+<div class="controls"><label>Poyezd tezligi: <input id="trainV" type="range" min="0" max="25" value="10"><output id="otrainV">10 m/s</output></label>
+<label>Yo‘lovchi tezligi (poyezdga nisbatan): <input id="personV" type="range" min="-5" max="5" value="2"><output id="opersonV">2 m/s</output></label>
+<button class="btn primary" id="toggle2">Pauza</button></div><p id="read2" class="muted"></p>
+<p class="note">Yo‘lovchi poyezd harakati yo‘nalishida yursa, yerga nisbatan tezliklar qo‘shiladi; teskari yursa, ayiriladi.</p></div>
+<div class="card"><h3>Inersial va noinertsial sistemalar</h3><ul><li><b>Inersial sistema:</b> jismga natijaviy kuch nol bo‘lsa, u tinch qoladi yoki tekis to‘g‘ri chiziqli harakat qiladi.</li><li><b>Noinertsial sistema:</b> tezlanish bilan harakatlanayotgan sistema; unda soxta (inersiya) kuchlarini hisobga olish talab qilinishi mumkin.</li></ul></div>
+</section>
+
+<section id="t3" class="panel">
+<div class="card"><h2>3. Gravitatsion maydonda harakat</h2><p>Havo qarshiligi e’tiborga olinmasa, Yer yaqinida erkin tushish tezlanishi taxminan 9,8 m/s² ga teng.</p>
+<div class="formula">v = v₀ + gt &nbsp; | &nbsp; h = h₀ + v₀t − gt²/2</div></div>
+<div class="card"><h3>Simulyatsiya: jismning erkin tushishi</h3><canvas id="c3" width="900" height="300"></canvas>
+<div class="controls"><label>Boshlang‘ich balandlik: <input id="height3" type="range" min="20" max="100" value="80"><output id="oheight3">80 m</output></label>
+<label>g: <input id="g3" type="range" min="1" max="15" value="9.8" step="0.1"><output id="og3">9.8 m/s²</output></label>
+<button class="btn primary" id="drop3">Tushirish</button></div><p id="read3" class="muted"></p>
+<p class="note">Modelda havo qarshiligi hisobga olinmaydi. “Tushirish” tugmasi jismni qayta harakatga keltiradi.</p></div>
+</section>
+
+<section id="t4" class="panel">
+<div class="card"><h2>4. Jism og‘irligining harakat turiga bog‘liqligi</h2><p>Jismning tayanchga yoki osmaga ko‘rsatadigan kuchi — og‘irlik. Tinch holat yoki tekis harakatda u odatda mg ga teng; tezlanish bo‘lsa, ko‘rinma og‘irlik o‘zgaradi.</p>
+<div class="formula">Yuqoriga tezlanish: N = m(g + a) &nbsp; | &nbsp; Pastga: N = m(g − a)</div></div>
+<div class="card"><h3>Simulyatsiya: lift ichidagi tarozi</h3><canvas id="c4" width="900" height="300"></canvas>
+<div class="controls"><label>Massa m: <input id="mass4" type="range" min="20" max="100" value="60"><output id="omass4">60 kg</output></label>
+<label>Lift tezlanishi a: <input id="acc4" type="range" min="-8" max="8" value="0" step="0.5"><output id="oacc4">0 m/s²</output></label></div>
+<p id="read4" class="muted"></p><p class="note">Musbat tezlanish yuqoriga, manfiy tezlanish pastga yo‘nalgan deb olinadi. Agar lift pastga erkin tushsa (a = −g), tarozi ko‘rsatkichi nolga yaqinlashadi.</p></div>
+</section>
+
+<section id="t5" class="panel">
+<div class="card"><h2>5. Jismning bir necha kuch ta’siridagi harakati</h2><p>Jismning tezlanishi barcha kuchlarning vektor yig‘indisi orqali aniqlanadi.</p>
+<div class="formula">F<sub>nat</sub> = ΣF &nbsp; | &nbsp; a = F<sub>nat</sub>/m</div></div>
+<div class="card"><h3>Simulyatsiya: qarama-qarshi kuchlar</h3><canvas id="c5" width="900" height="300"></canvas>
+<div class="controls"><label>O‘ngga kuch F₁: <input id="f51" type="range" min="0" max="40" value="25"><output id="of51">25 N</output></label>
+<label>Chapga kuch F₂: <input id="f52" type="range" min="0" max="40" value="10"><output id="of52">10 N</output></label>
+<label>Massa: <input id="m5" type="range" min="1" max="20" value="5"><output id="om5">5 kg</output></label></div>
+<p id="read5" class="muted"></p><p class="note">Natijaviy kuch nol bo‘lsa, tezlanish nol: jism tinch turishi yoki o‘zgarmas tezlikda harakatlanishi mumkin.</p></div>
+</section>
+<div class="card"><h3>Mustahkamlash savollari</h3><ol><li>Natijaviy kuch ikki marta oshsa, massa o‘zgarmaganda tezlanish qanday o‘zgaradi?</li><li>Poyezdga nisbatan 2 m/s tezlikda oldinga yurgan yo‘lovchining yerga nisbatan tezligi qanday topiladi?</li><li>Erkin tushishda tezlik vaqt o‘tishi bilan qanday o‘zgaradi?</li><li>Lift yuqoriga tezlanayotganda tarozi ko‘rsatkichi nima sababdan ortadi?</li><li>Jismga 20 N o‘ngga va 20 N chapga kuch ta’sir etsa, natijaviy kuch qancha?</li></ol></div>
+</main>
+<footer>10-sinf fizika • II bob: Dinamika • Interaktiv o‘quv materiali</footer>
+<script>
+const $=id=>document.getElementById(id);
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')}));
+function ctx(id){let c=$(id),x=c.getContext('2d');return {c,x,w:c.width,h:c.height}}
+function line(x,a,b,c,d,color='#7d8da5',width=2){x.strokeStyle=color;x.lineWidth=width;x.beginPath();x.moveTo(a,b);x.lineTo(c,d);x.stroke()}
+function text(x,s,a,b,color='#172033',size=17){x.fillStyle=color;x.font=`${size}px Arial`;x.fillText(s,a,b)}
+function arrow(x,a,b,c,d,color='#155eef',width=4){line(x,a,b,c,d,color,width);let ang=Math.atan2(d-b,c-a),L=12;x.beginPath();x.moveTo(c,d);x.lineTo(c-L*Math.cos(ang-.5),d-L*Math.sin(ang-.5));x.lineTo(c-L*Math.cos(ang+.5),d-L*Math.sin(ang+.5));x.closePath();x.fillStyle=color;x.fill()}
+let pos1=0,paused2=false,t2pos=0,dropT=0,dropOn=false;
+function draw1(){let {x,w,h}=ctx('c1'),F=+$('f1').value,m=+$('m1').value,a=F/m; $('of1').textContent=F+' N';$('om1').textContent=m+' kg';$('read1').textContent=`Natijaviy kuch: ${F} N; tezlanish: ${a.toFixed(2)} m/s².`;x.clearRect(0,0,w,h);line(x,30,h-35,w-30,h-35,'#94a3b8',3);let bx=100+(pos1%(w-230));x.fillStyle='#f59e0b';x.fillRect(bx,h-105,95,55);x.fillStyle='#6b4b13';x.beginPath();x.arc(bx+22,h-42,12,0,7);x.arc(bx+73,h-42,12,0,7);x.fill();arrow(x,bx+45,h-118,bx+45+Math.max(0,F)*2,h-118,'#155eef',4);text(x,'F = '+F+' N',bx+30,h-130,'#155eef',15);text(x,'m = '+m+' kg',20,30);text(x,'a = '+a.toFixed(2)+' m/s²',20,55);pos1+=Math.max(0.4,a*1.5)}
+function drawThird(){let {x,w,h}=ctx('third');x.clearRect(0,0,w,h);x.fillStyle='#9dd6ff';x.fillRect(100,80,170,75);x.fillStyle='#fbbf24';x.fillRect(w-270,80,170,75);text(x,'1-jism',150,125);text(x,'2-jism',w-220,125);arrow(x,270,115,380,115,'#155eef',5);arrow(x,w-270,145,w-380,145,'#e05b48',5);text(x,'Ta’sir',310,95,'#155eef',15);text(x,'Aks ta’sir',w-380,175,'#e05b48',15)}
+function draw2(){let {x,w,h}=ctx('c2'),tv=+$('trainV').value,pv=+$('personV').value;x.clearRect(0,0,w,h);x.fillStyle='#e5eef9';x.fillRect(70,90,w-140,115);x.fillStyle='#8bb8df';x.fillRect(90,110,w-180,70);for(let i=0;i<5;i++){x.fillStyle='#fff';x.fillRect(110+i*125,120,80,40)}line(x,50,225,w-50,225,'#66768b',4);let px=170+(t2pos%(w-330));x.fillStyle='#d64f45';x.beginPath();x.arc(px,130,13,0,7);x.fill();line(x,px,143,px,170,'#d64f45',4);line(x,px,150,px+18,160,'#d64f45',3);text(x,'Poyezd',90,75);text(x,'Yo‘lovchi',px-35,100,'#b8322a',14);text(x,'Yerga nisbatan v = '+(tv+pv).toFixed(1)+' m/s',90,265,'#155eef',18);$('otrainV').textContent=tv+' m/s';$('opersonV').textContent=pv+' m/s';$('read2').textContent=`Yo‘lovchining yerga nisbatan tezligi: ${tv} + (${pv}) = ${(tv+pv).toFixed(1)} m/s.`;if(!paused2)t2pos+=Math.max(.5,tv*.25)}
+function draw3(){let {x,w,h}=ctx('c3'),H=+$('height3').value,g=+$('g3').value;x.clearRect(0,0,w,h);line(x,35,245,w-35,245,'#63758b',4);let scale=1.9,fall=dropOn?Math.min(H,0.5*g*dropT*dropT):0,y=45+fall*scale;x.fillStyle='#e59b31';x.beginPath();x.arc(160,Math.min(y,235),15,0,7);x.fill();text(x,'h₀ = '+H+' m',35,30);text(x,'g = '+g.toFixed(1)+' m/s²',35,55);let t=Math.sqrt(2*H/g);$('oheight3').textContent=H+' m';$('og3').textContent=g.toFixed(1)+' m/s²';$('read3').textContent=dropOn?`t = ${dropT.toFixed(2)} s; v = ${(g*dropT).toFixed(2)} m/s; taxminiy tushish vaqti ${t.toFixed(2)} s.`:`Taxminiy tushish vaqti: ${t.toFixed(2)} s (v₀ = 0).`}
+function draw4(){let {x,w,h}=ctx('c4'),m=+$('mass4').value,a=+$('acc4').value,g=9.8,N=m*(g+a);x.clearRect(0,0,w,h);x.strokeStyle='#77879b';x.lineWidth=5;x.strokeRect(w/2-95,35,190,220);x.fillStyle='#d9e7f7';x.fillRect(w/2-80,50,160,190);x.fillStyle='#4b91d1';x.beginPath();x.arc(w/2,100,20,0,7);x.fill();x.fillRect(w/2-13,120,26,52);line(x,w/2-10,175,w/2-35,200,'#4b91d1',6);line(x,w/2+10,175,w/2+35,200,'#4b91d1',6);x.fillStyle='#f5c65c';x.fillRect(w/2-45,215,90,12);arrow(x,w/2+120,210,w/2+120-(a*7),210,'#e05b48',4);text(x,'Lift',w/2-20,25);$('omass4').textContent=m+' kg';$('oacc4').textContent=a+' m/s²';$('read4').textContent=`Tarozi ko‘rsatkichi N = m(g + a) = ${m} × (9.8 + (${a})) = ${N.toFixed(1)} N. ${N<0?'Bu holatda tanlangan tezlanish fizik model chegarasidan tashqarida.':''}`}
+function draw5(){let {x,w,h}=ctx('c5'),F1=+$('f51').value,F2=+$('f52').value,m=+$('m5').value,Fn=F1-F2,a=Fn/m;x.clearRect(0,0,w,h);line(x,30,235,w-30,235,'#8998aa',3);let bx=w/2-50;x.fillStyle='#8cc6f2';x.fillRect(bx,130,100,70);text(x,'m = '+m+' kg',bx+15,170);arrow(x,bx+50,115,bx+50+F1*4,115,'#155eef',4);arrow(x,bx+50,215,bx+50-F2*4,215,'#e05b48',4);text(x,'F₁ = '+F1+' N',25,55,'#155eef');text(x,'F₂ = '+F2+' N',25,80,'#e05b48');$('of51').textContent=F1+' N';$('of52').textContent=F2+' N';$('om5').textContent=m+' kg';$('read5').textContent=`F_nat = ${F1} − ${F2} = ${Fn} N; a = F_nat/m = ${a.toFixed(2)} m/s² (${Fn>0?'o‘ngga':Fn<0?'chapga':'tezlanish yo‘q'}).`}
+function loop(){draw1();drawThird();draw2();draw3();draw4();draw5();if(dropOn){dropT+=.025;if(dropT>Math.sqrt(2*(+$('height3').value)/(+$('g3').value)))dropOn=false}requestAnimationFrame(loop)}
+['f1','m1','trainV','personV','height3','g3','mass4','acc4','f51','f52','m5'].forEach(id=>$(id).addEventListener('input',()=>{}));
+$('reset1').onclick=()=>pos1=0;$('toggle2').onclick=()=>{paused2=!paused2;$('toggle2').textContent=paused2?'Davom ettirish':'Pauza'};
+$('drop3').onclick=()=>{dropT=0;dropOn=true};
+loop();
+</script>
+</body></html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mexanikada saqlanish qonunlari — 10-sinf</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f7f6f2;--fg:#1d1d1b;--card:#fff;--mut:#666;--ac:#2b6cb0;--ac2:#d9480f;--bd:#ddd}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--fg:#eee;--card:#222428;--mut:#aaa;--ac:#63b3ed;--ac2:#ff922b;--bd:#3a3d42}}
+:root[data-theme="dark"]{--bg:#17181a;--fg:#eee;--card:#222428;--mut:#aaa;--ac:#63b3ed;--ac2:#ff922b;--bd:#3a3d42}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:12px}
+h1{font-size:20px;margin:4px 0 10px}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+nav button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--fg);padding:8px 12px;border-radius:20px;font:inherit;font-size:14px}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+section{display:none;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-top:8px}
+section.on{display:block}
+h2{font-size:18px;margin:0 0 6px}
+.rj{margin:6px 0;padding-left:20px;font-size:14.5px}
+.rj b{color:var(--ac)}
+canvas{width:100%;height:auto;background:var(--bg);border:1px solid var(--bd);border-radius:8px;display:block}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:8px 0;font-size:13px}
+.ctl label{display:flex;flex-direction:column}
+.ctl input[type=range]{width:100%}
+.out{font-size:14px;color:var(--mut);font-variant-numeric:tabular-nums;min-height:44px}
+.out b{color:var(--ac2)}
+button.r{border:1px solid var(--ac);background:none;color:var(--ac);border-radius:8px;padding:6px 12px;font:inherit;font-size:14px}
+</style></head><body>
+<h1>⚙️ 3-bob. Mexanikada saqlanish qonunlari</h1>
+<nav id="nav"></nav>
+<div id="secs"></div>
+<script>
+const T=[
+{id:'imp',t:'Impuls va to‘qnashuv',rj:[
+['Reja 1','Impuls p = mv ni kiritish: ikki aravacha, turli massa va tezlik.'],
+['Reja 2','Yopiq sistemada Σp o‘zgarmasligini kuzatish (slayderlar bilan).'],
+['Reja 3','Elastik va noelastik urilishni solishtirish: energiya nimaga o‘tadi?']],
+c:[['m1','m₁ (kg)',1,10,4,1],['m2','m₂ (kg)',1,10,2,1],['v1','v₁ (m/s)',0,6,4,.5],['v2','v₂ (m/s)',-4,3,-1,.5]],chk:'Elastik urilish',
+cw:600,ch:200},
+{id:'rea',t:'Reaktiv harakat',rj:[
+['Reja 1','Shar va havo: chiqayotgan oqim bir tomonga, shar boshqa tomonga.'],
+['Reja 2','Impulsning saqlanishidan Mdv = u·dm ni keltirib chiqarish.'],
+['Reja 3','Siolkovskiy formulasi v = u·ln(M₀/M): u va yoqilg‘i ta’siri.']],
+c:[['u','Gaz tezligi u (km/s)',1,5,3,.5],['k','Sarf (kg/s)',2,10,5,1]],cw:300,ch:300},
+{id:'ish',t:'Mexanik ish va quvvat',rj:[
+['Reja 1','A = F·s·cosα: kuch va ko‘chish orasidagi burchak ma’nosi.'],
+['Reja 2','Ish musbat, nol va manfiy bo‘lgan holatlar (α = 0°, 90°, 180°).'],
+['Reja 3','Quvvat P = A/t: bir xil ishni tez va sekin bajarish.']],
+c:[['F','Kuch F (N)',5,50,20,1],['a','Burchak α (°)',0,180,30,5]],cw:600,ch:160},
+{id:'en',t:'Energiya va uning saqlanishi',rj:[
+['Reja 1','Kinetik energiya Ek = mv²/2 va potensial Ep = mgh tushunchasi.'],
+['Reja 2','Mayatnik: Ek va Ep ning bir-biriga aylanishi, yig‘indisi o‘zgarmaydi.'],
+['Reja 3','Massa, uzunlik, burchakni o‘zgartirib, to‘liq E = const ni tekshirish.']],
+c:[['L','Uzunlik L (m)',.5,2,1,.1],['th','Boshlang‘ich burchak (°)',10,80,50,5],['m','Massa m (kg)',.5,5,1,.5]],cw:600,ch:260}
+];
+const nav=document.getElementById('nav'),secs=document.getElementById('secs');
+const S={};let cur=0;
+T.forEach((o,i)=>{
+ const b=document.createElement('button');b.textContent=(i+1)+'. '+o.t;b.onclick=()=>show(i);nav.appendChild(b);
+ const s=document.createElement('section');
+ s.innerHTML='<h2>'+o.t+'</h2><ol class="rj">'+o.rj.map(r=>'<li><b>'+r[0]+':</b> '+r[1]+'</li>').join('')+'</ol>'+
+ '<canvas id="c'+i+'" width="'+o.cw+'" height="'+o.ch+'"></canvas><div class="ctl">'+
+ o.c.map(c=>'<label>'+c[1]+': <span id="'+o.id+c[0]+'v">'+c[4]+'</span><input type="range" id="'+o.id+c[0]+'" min="'+c[2]+'" max="'+c[3]+'" step="'+c[5]+'" value="'+c[4]+'"></label>').join('')+
+ (o.chk?'<label><span><input type="checkbox" id="'+o.id+'chk" checked> '+o.chk+'</span></label>':'')+
+ '</div><button class="r" id="'+o.id+'r">↻ Qayta boshlash</button><div class="out" id="'+o.id+'o"></div>';
+ secs.appendChild(s);
+});
+function g(id,k){return +document.getElementById(id+k).value}
+function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n)}
+// --- simulyatsiyalar
+S.imp={r(){const m1=g('imp','m1'),m2=g('imp','m2');this.x1=1;this.x2=9;this.v1=g('imp','v1');this.v2=g('imp','v2');this.m1=m1;this.m2=m2;this.hit=false;this.p0=m1*this.v1+m2*this.v2;this.k0=.5*m1*this.v1**2+.5*m2*this.v2**2},
+s(d){const e=document.getElementById('impchk').checked;
+ this.x1+=this.v1*d;this.x2+=this.v2*d;
+ if(!this.hit&&this.x1+1>=this.x2&&this.v1>this.v2){const{m1,m2,v1,v2}=this;this.hit=true;
+  if(e){this.v1=((m1-m2)*v1+2*m2*v2)/(m1+m2);this.v2=((m2-m1)*v2+2*m1*v1)/(m1+m2)}else{this.v1=this.v2=(m1*v1+m2*v2)/(m1+m2)}}
+ if(this.x1<-2||this.x2>14||this.x1>14||this.x2<-2)this.r()},
+d(c,w,h){const sc=w/12;c.fillStyle=css('--mut');c.fillRect(0,h-50,w,2);
+ [[this.x1,this.m1,'#2b6cb0'],[this.x2,this.m2,'#d9480f']].forEach(a=>{const s=sc*(.6+a[1]*.05);c.fillStyle=a[2];c.fillRect(a[0]*sc,h-52-s,sc,s);c.fillStyle='#fff';c.font='14px sans-serif';c.fillText(a[1]+' kg',a[0]*sc+6,h-60)});
+ c.fillStyle=css('--fg');c.font='13px sans-serif';c.fillText('v₁='+this.v1.toFixed(2)+'  v₂='+this.v2.toFixed(2),10,20)},
+o(){const p=this.m1*this.v1+this.m2*this.v2,k=.5*this.m1*this.v1**2+.5*this.m2*this.v2**2;
+ return 'Σp (oldin) = <b>'+this.p0.toFixed(1)+'</b> kg·m/s; Σp (hozir) = <b>'+p.toFixed(1)+'</b><br>Ek (oldin) = '+this.k0.toFixed(1)+' J; Ek (hozir) = <b>'+k.toFixed(1)+'</b> J'}};
+S.rea={r(){this.y=0;this.v=0;this.M=100;this.M0=100;this.fuel=60;this.p=[]},
+s(d){const u=g('rea','u')*1000,k=g('rea','k');
+ if(this.fuel>0){const dm=Math.min(k*d,this.fuel);this.v+=u*dm/this.M;this.M-=dm;this.fuel-=dm;this.p.push([0,0,1])}
+ this.y+=this.v*d*.02;this.p.forEach(q=>{q[1]+=200*d;q[2]-=d});this.p=this.p.filter(q=>q[2]>0)},
+d(c,w,h){c.fillStyle=css('--mut');for(let i=0;i<20;i++){c.fillRect((i*83)%w,((i*57+this.y*300)%h),2,2)}
+ const x=w/2,y=h*.45;c.fillStyle='#888';c.beginPath();c.moveTo(x,y-50);c.lineTo(x+16,y);c.lineTo(x-16,y);c.fill();c.fillRect(x-16,y,32,40);
+ this.p.forEach(q=>{c.fillStyle='rgba(255,140,0,'+q[2]+')';c.beginPath();c.arc(x+Math.sin(q[1])*5,y+40+q[1]*.6,5*q[2]+2,0,7);c.fill()})},
+o(){const u=g('rea','u')*1000;return 'Massa M = <b>'+this.M.toFixed(1)+'</b> kg, v = <b>'+(this.v/1000).toFixed(2)+'</b> km/s<br>Siolkovskiy: u·ln(M₀/M) = '+(u*Math.log(this.M0/this.M)/1000).toFixed(2)+' km/s'}};
+S.ish={r(){this.x=0;this.t=0;this.v=0},
+s(d){const F=g('ish','F'),a=g('ish','a')*Math.PI/180,m=5;this.t+=d;
+ const ac=F*Math.cos(a)/m;this.v+=ac*d;this.x+=this.v*d;if(this.x<0)this.x=0,this.v=0;if(this.x>10)this.r()},
+d(c,w,h){const sc=(w-120)/10,F=g('ish','F'),a=g('ish','a')*Math.PI/180,x=20+this.x*sc,y=h-40;
+ c.fillStyle=css('--mut');c.fillRect(0,y,w,2);c.fillStyle='#2b6cb0';c.fillRect(x,y-40,60,40);
+ c.strokeStyle='#d9480f';c.lineWidth=3;const L=F*2;c.beginPath();c.moveTo(x+30,y-20);c.lineTo(x+30+L*Math.cos(a),y-20-L*Math.sin(a));c.stroke();
+ c.fillStyle=css('--fg');c.font='13px sans-serif';c.fillText('F kuch (qizil). Ko‘chish s = '+this.x.toFixed(1)+' m',10,20)},
+o(){const F=g('ish','F'),a=g('ish','a'),A=F*this.x*Math.cos(a*Math.PI/180);return 'A = F·s·cosα = <b>'+A.toFixed(1)+'</b> J'+(a==90?' (kuch ko‘chishga tik, ish nol)':a>90?' (manfiy ish)':'')+'<br>O‘rtacha quvvat P = A/t = <b>'+(this.t>0?A/this.t:0).toFixed(1)+'</b> W'}};
+S.en={r(){this.a=g('en','th')*Math.PI/180;this.w=0},
+s(d){const L=g('en','L');for(let i=0;i<5;i++){const dt=d/5;this.w+=-9.81/L*Math.sin(this.a)*dt;this.a+=this.w*dt}},
+d(c,w,h){const L=g('en','L'),sc=90*L,px=150,py=20,x=px+sc*Math.sin(this.a),y=py+sc*Math.cos(this.a);
+ c.strokeStyle=css('--fg');c.lineWidth=2;c.beginPath();c.moveTo(px,py);c.lineTo(x,y);c.stroke();c.fillStyle='#2b6cb0';c.beginPath();c.arc(x,y,12,0,7);c.fill();
+ const m=g('en','m'),h0=L*(1-Math.cos(this.a)),Ep=m*9.81*h0,Ek=.5*m*(L*this.w)**2,E=Ep+Ek,mx=Math.max(E,1)*1.0;
+ const bx=330,bw=60;[['Ek',Ek,'#d9480f'],['Ep',Ep,'#2b6cb0'],['E',E,'#2f9e44']].forEach((q,i)=>{const bh=q[1]/mx*180;c.fillStyle=q[2];c.fillRect(bx+i*80,230-bh,bw,bh);c.fillStyle=css('--fg');c.font='13px sans-serif';c.fillText(q[0]+' '+q[1].toFixed(1),bx+i*80,248)});
+ this.E=E;this.Ek=Ek;this.Ep=Ep},
+o(){return 'Ek = <b>'+(this.Ek||0).toFixed(2)+'</b> J, Ep = <b>'+(this.Ep||0).toFixed(2)+'</b> J<br>E = Ek + Ep = <b>'+(this.E||0).toFixed(2)+'</b> J (o‘zgarmaydi)'}};
+// --- boshqaruv
+T.forEach((o,i)=>{
+ const rs=()=>S[o.id].r();
+ o.c.forEach(c=>{const el=document.getElementById(o.id+c[0]);el.oninput=()=>{document.getElementById(o.id+c[0]+'v').textContent=el.value;if(o.id!='ish'&&o.id!='rea')rs();if(o.id=='rea')rs();if(o.id=='ish')rs()}});
+ if(o.chk)document.getElementById(o.id+'chk').onchange=rs;
+ document.getElementById(o.id+'r').onclick=rs;rs();
+});
+function show(i){cur=i;[...nav.children].forEach((b,j)=>b.classList.toggle('on',j==i));[...secs.children].forEach((s,j)=>s.classList.toggle('on',j==i))}
+show(0);
+let last=performance.now();
+function loop(n){const d=Math.min((n-last)/1000,.05);last=n;const o=T[cur],s=S[o.id],cv=document.getElementById('c'+cur),c=cv.getContext('2d');
+ s.s(d);c.clearRect(0,0,cv.width,cv.height);s.d(c,cv.width,cv.height);
+ document.getElementById(o.id+'o').innerHTML=s.o();requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+</script></body></html>

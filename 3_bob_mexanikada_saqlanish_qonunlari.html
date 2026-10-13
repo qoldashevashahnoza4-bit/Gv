@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>III bob — Mexanikada saqlanish qonunlari</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:950px;margin:auto;padding:16px;line-height:1.5;color:#172033;background:#f5f8fc}
+h1{color:#174b70}h2{color:#176b72}.card{background:white;border:1px solid #d4e0eb;border-radius:14px;padding:16px;margin:16px 0;box-shadow:0 2px 8px #0000000a}
+label{display:block;margin-top:10px}input,select{width:100%;margin:4px 0 8px}button{padding:10px 14px;border:0;border-radius:8px;background:#176b72;color:white;margin:4px;cursor:pointer}
+canvas{width:100%;height:auto;background:#eef5f9;border-radius:10px;border:1px solid #d4e0eb}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.metric{background:#eef5f9;padding:10px;border-radius:8px}
+</style></head><body>
+<h1>III bob. Mexanikada saqlanish qonunlari</h1>
+<p>Parametrlarni o‘zgartiring va simulyatsiyalarni ishga tushiring. Har bir bo‘limda harakat animatsiyasi ham mavjud.</p>
+<div class="card">
+<h2>14-mavzu. Energiya va ish — qiya tekislikdagi harakat</h2>
+<p><b>Reja:</b> 1) Mexanik ish. 2) Kinetik va potensial energiya. 3) Mexanik energiyaning saqlanishi va ishqalanish.</p>
+<label>Jism massasi: <span id="mv">2</span> kg</label><input id="m" type="range" min="1" max="10" value="2">
+<label>Balandlik: <span id="hv">3</span> m</label><input id="h" type="range" min="1" max="10" value="3">
+<label>Ishqalanish ulushi: <span id="fv">10</span>%</label><input id="f" type="range" min="0" max="80" value="10">
+<canvas id="ramp" width="720" height="260"></canvas><button id="play">▶ Animatsiyani boshlash</button><button id="reset">↺ Qayta boshlash</button>
+<div class="metrics"><div class="metric">Potensial energiya: <b id="pe">58.9 J</b></div><div class="metric">Kinetik energiya: <b id="ke">0 J</b></div><div class="metric">Ishqalanishga ketgan energiya: <b id="loss">0 J</b></div><div class="metric">Jami energiya: <b id="tot">58.9 J</b></div></div>
+</div>
+<div class="card">
+<h2>15-mavzu. Qiya tekislikda foydali ish koeffitsiyenti</h2>
+<p><b>Reja:</b> 1) Foydali va umumiy ish. 2) Qiya tekislikning ishlash prinsipi. 3) FIKni hisoblash.</p>
+<label>Yuk massasi: <span id="lmv">5</span> kg</label><input id="lm" type="range" min="1" max="20" value="5">
+<label>Qiya tekislik uzunligi: <span id="sv">4</span> m</label><input id="s" type="range" min="2" max="10" value="4">
+<label>Ko‘tarilish balandligi: <span id="hhv">1.5</span> m</label><input id="hh" type="range" min="5" max="90" value="15">
+<label>Tortish kuchi: <span id="Fv">30</span> N</label><input id="F" type="range" min="10" max="150" value="30">
+<canvas id="lab" width="720" height="220"></canvas>
+<div class="metrics"><div class="metric">Foydali ish: <b id="useful"></b></div><div class="metric">Umumiy ish: <b id="work"></b></div><div class="metric">FIK: <b id="eta"></b></div></div>
+<p id="note"></p>
+</div>
+<div class="card">
+<h2>16-mavzu. Elastik va noelastik to‘qnashish</h2>
+<p><b>Reja:</b> 1) Impuls va uning saqlanishi. 2) Elastik to‘qnashish. 3) Noelastik to‘qnashish.</p>
+<label>1-jism massasi: <span id="m1v">2</span> kg</label><input id="m1" type="range" min="1" max="8" value="2">
+<label>1-jism tezligi: <span id="v1v">3</span> m/s</label><input id="v1" type="range" min="-5" max="8" value="3">
+<label>2-jism massasi: <span id="m2v">2</span> kg</label><input id="m2" type="range" min="1" max="8" value="2">
+<label>2-jism tezligi: <span id="v2v">0</span> m/s</label><input id="v2" type="range" min="-5" max="8" value="0">
+<label>To‘qnashish turi</label><select id="type"><option value="elastic">Absolyut elastik</option><option value="inelastic">Absolyut noelastik (birga harakatlanadi)</option></select>
+<canvas id="coll" width="720" height="210"></canvas><button id="cplay">▶ To‘qnashuv animatsiyasi</button><button id="creset">↺ Qayta boshlash</button>
+<div class="metrics"><div class="metric">Impuls oldin: <b id="pb"></b></div><div class="metric">Impuls keyin: <b id="pa"></b></div><div class="metric">Kinetik energiya oldin: <b id="kb"></b></div><div class="metric">Kinetik energiya keyin: <b id="ka"></b></div></div><p id="cnote"></p>
+</div>
+<script>
+const $=id=>document.getElementById(id), n=id=>Number($(id).value), fmt=x=>(Math.abs(x)<.005?0:x).toFixed(2);
+let rt=0,rr=false,ct=0,cr=false;
+function ramp(){
+ let m=n('m'),h=n('h'),f=n('f')/100; $('mv').textContent=m;$('hv').textContent=h;$('fv').textContent=n('f');
+ let t=rt,E=m*9.81*h,pe=E*(1-t),loss=E*f*t,ke=Math.max(0,E-pe-loss);
+ $('pe').textContent=fmt(pe)+' J';$('ke').textContent=fmt(ke)+' J';$('loss').textContent=fmt(loss)+' J';$('tot').textContent=fmt(pe+ke+loss)+' J';
+ let c=$('ramp'),x=c.getContext('2d');x.clearRect(0,0,720,260);x.strokeStyle='#657789';x.lineWidth=6;x.beginPath();x.moveTo(85,40);x.lineTo(610,220);x.lineTo(670,220);x.stroke();x.fillStyle='#0d9488';x.save();x.translate(85+525*t,40+180*t-12);x.rotate(Math.atan2(180,525));x.fillRect(-15,-13,30,26);x.restore();x.fillStyle='#172033';x.font='18px Arial';x.fillText('h = '+h+' m',18,28);x.fillText('Qiya tekislik',330,115);
+}
+function rampLoop(){if(rr){rt=Math.min(1,rt+.006);ramp();if(rt>=1)rr=false}requestAnimationFrame(rampLoop)}
+['m','h','f'].forEach(id=>$(id).oninput=()=>{rt=0;ramp()});$('play').onclick=()=>{rt=0;rr=true};$('reset').onclick=()=>{rr=false;rt=0;ramp()};
+function lab(){let m=n('lm'),s=n('s'),h=n('hh')/10,F=n('F');$('lmv').textContent=m;$('sv').textContent=s;$('hhv').textContent=h.toFixed(1);$('Fv').textContent=F;let u=m*9.81*h,w=F*s,e=u/w*100;$('useful').textContent=fmt(u)+' J';$('work').textContent=fmt(w)+' J';$('eta').textContent=fmt(e)+'%';$('note').textContent=e>100?'FIK 100% dan oshmasligi kerak: berilgan qiymatlarni qayta tekshiring.':'FIK foydali ishning umumiy ishga nisbatidir.';let c=$('lab'),x=c.getContext('2d');x.clearRect(0,0,720,220);x.strokeStyle='#657789';x.lineWidth=6;x.beginPath();x.moveTo(100,35);x.lineTo(570,190);x.lineTo(640,190);x.stroke();x.fillStyle='#0d9488';x.fillRect(100,24,28,24);x.fillStyle='#172033';x.font='17px Arial';x.fillText('Yuk',100,18);x.fillText('h = '+h.toFixed(1)+' m',18,65);x.fillText('s = '+s+' m',400,145)}
+['lm','s','hh','F'].forEach(id=>$(id).oninput=lab);
+function calc(){let m1=n('m1'),m2=n('m2'),v1=n('v1'),v2=n('v2'),elastic=$('type').value==='elastic',u1,u2;if(elastic){u1=((m1-m2)*v1+2*m2*v2)/(m1+m2);u2=((m2-m1)*v2+2*m1*v1)/(m1+m2)}else u1=u2=(m1*v1+m2*v2)/(m1+m2);let p=m1*v1+m2*v2,k=.5*m1*v1*v1+.5*m2*v2*v2,k2=.5*m1*u1*u1+.5*m2*u2*u2;$('m1v').textContent=m1;$('m2v').textContent=m2;$('v1v').textContent=v1;$('v2v').textContent=v2;$('pb').textContent=fmt(p)+' kg·m/s';$('pa').textContent=fmt(m1*u1+m2*u2)+' kg·m/s';$('kb').textContent=fmt(k)+' J';$('ka').textContent=fmt(k2)+' J';$('cnote').textContent=elastic?'Elastik to‘qnashuvda impuls va kinetik energiya saqlanadi. Yakuniy tezliklar: '+fmt(u1)+' va '+fmt(u2)+' m/s.':'Noelastik to‘qnashuvda jismlar birga harakatlanadi. Umumiy tezlik: '+fmt(u1)+' m/s; kinetik energiya kamayishi: '+fmt(k-k2)+' J.';return {m1,m2,v1,v2,u1,u2}}
+function drawColl(){let d=calc(),c=$('coll'),x=c.getContext('2d');x.clearRect(0,0,720,210);x.strokeStyle='#657789';x.lineWidth=2;x.beginPath();x.moveTo(15,150);x.lineTo(705,150);x.stroke();let a=100+200*ct,b=610-200*ct;if(ct>.5){let q=(ct-.5)*2;a=300+Math.sign(d.u1||1)*90*q;b=$('type').value==='inelastic'?a:360+Math.sign(d.u2||1)*90*q}function ball(px,label){x.beginPath();x.arc(px,110,25,0,Math.PI*2);x.fillStyle='#0d9488';x.fill();x.fillStyle='white';x.font='bold 17px Arial';x.textAlign='center';x.fillText(label,px,116)}ball(a,'1');ball(b,'2');x.fillStyle='#172033';x.textAlign='left';x.font='16px Arial';x.fillText('Boshlang‘ich tezliklar: '+d.v1+' m/s va '+d.v2+' m/s',15,28)}
+function collLoop(){if(cr){ct=Math.min(1,ct+.009);drawColl();if(ct>=1)cr=false}requestAnimationFrame(collLoop)}
+['m1','m2','v1','v2','type'].forEach(id=>$(id).oninput=drawColl);$('cplay').onclick=()=>{ct=0;cr=true};$('creset').onclick=()=>{cr=false;ct=0;drawColl()};
+ramp();lab();drawColl();rampLoop();collLoop();
+</script></body></html>

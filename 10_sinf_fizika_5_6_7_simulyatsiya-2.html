@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10-sinf fizika: 5–7-mavzular simulyatsiyasi</title>
+<style>
+:root{font-family:Arial,sans-serif;color:#172b43;background:#f4f8fc}body{margin:0;padding:16px}main{max-width:980px;margin:auto}h1{font-size:1.5rem}button,input,select{font:inherit}button{padding:10px 14px;border:1px solid #b8c8d9;border-radius:8px;background:#fff;cursor:pointer}button.active{background:#dcecff;border-color:#3478c9;font-weight:bold}.tabs,.actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.box{background:#fff;border:1px solid #d5e0ec;border-radius:12px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}label{display:block;font-size:.95rem;margin:8px 0}input[type=range]{display:block;width:100%;margin-top:8px}canvas{width:100%;height:auto;border-radius:8px;background:#eaf5ff;border:1px solid #c7d8e8}.muted{color:#52677e}.formula{line-height:1.8}.result{background:#eef7ff;border-radius:8px;padding:12px;line-height:1.8}h2{margin-top:0;font-size:1.25rem}h3{font-size:1.05rem;margin-bottom:6px}#drive{padding:7px;max-width:100%}@media(max-width:480px){body{padding:8px}h1{font-size:1.25rem}.box{padding:10px}}
+</style>
+</head>
+<body><main>
+<h1>10-sinf fizika — 5-, 6-, 7-mavzular uchun simulyatsiya va animatsiya</h1>
+<p class="muted">Mavzuni tanlang, parametrlarni o‘zgartiring va harakatni kuzating. Fayl internet talab qilmaydi.</p>
+<div class="tabs">
+<button class="active" data-topic="5">5. Harakatni uzatish</button>
+<button data-topic="6">6. Gorizontal otilish</button>
+<button data-topic="7">7. Qiya otilish</button>
+</div>
+<section class="box">
+<h2 id="title">Aylanma va ilgarilanma harakatni o‘zaro uzatish</h2>
+<p id="desc" class="muted">Radius va aylanish tezligini o‘zgartirib, g‘ildiraklar harakatini kuzating.</p>
+<canvas id="scene" width="800" height="360" aria-label="Fizik jarayon animatsiyasi"></canvas>
+<div id="controls" class="grid"></div>
+<div id="results" class="result" aria-live="polite"></div>
+<div class="actions">
+<button id="play">▶ Boshlash</button><button id="pause">Ⅱ Pauza</button><button id="reset">↻ Qayta boshlash</button>
+</div>
+</section>
+<section class="box">
+<h3>Asosiy formulalar</h3><div id="formulas" class="formula"></div>
+<h3>Animatsiya bosqichlari</h3><p id="steps"></p>
+</section>
+<section class="box">
+<h3>ChatGPT uchun tayyor prompt</h3><p id="prompt" class="muted"></p>
+</section>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),canvas=$('scene'),ctx=canvas.getContext('2d');
+let topic='5',running=false,t=0,last=0,raf=0,params={r1:40,r2:25,speed:1.5,v0:20,h:10,g:9.8,angle:45,drive:'gear'};
+const prompts={
+'5':'10-sinf fizika uchun “Aylanma va ilgarilanma harakatni o‘zaro uzatish” mavzusida bitta HTML faylida ishlaydigan interaktiv simulyatsiya yarat. Tishli g‘ildiraklar va kamarli uzatmani ko‘rsat; radiuslar va aylanish tezligini o‘zgartirish, boshlash/pauza/qayta boshlash, yo‘nalish strelkalari va ω₁r₁=ω₂r₂ formulasini qo‘sh. Animatsiya ravon va fizik jihatdan to‘g‘ri bo‘lsin.',
+'6':'10-sinf fizika uchun “Gorizontal otilgan jism harakati” mavzusida interaktiv HTML simulyatsiya yarat. Boshlang‘ich gorizontal tezlik, balandlik va g ni o‘zgartirish mumkin bo‘lsin. Trayektoriya, tezlik vektorlari, uchish vaqti t=√(2h/g), masofa L=v₀√(2h/g) va boshlash/pauza/qayta boshlash tugmalari bo‘lsin. Havoning qarshiligini hisobga olma.',
+'7':'10-sinf fizika uchun “Gorizontga qiya otilgan jism harakati” mavzusida interaktiv HTML simulyatsiya yarat. Boshlang‘ich tezlik, otilish burchagi va g ni sozlash, parabolik trayektoriya, tezlik vektorlari, maksimal balandlik, uchish vaqti va masofani hisoblash funksiyalarini qo‘sh. Formulalar: vx=v₀cosα, vy=v₀sinα−gt, H=v₀²sin²α/(2g), T=2v₀sinα/g, L=v₀²sin(2α)/g.'};
+function makeControls(){
+let html='';
+if(topic==='5')html=`<label>1-g‘ildirak radiusi r₁: <b id="r1v"></b><input id="r1" type="range" min="20" max="65" value="${params.r1}"></label><label>2-g‘ildirak radiusi r₂: <b id="r2v"></b><input id="r2" type="range" min="15" max="55" value="${params.r2}"></label><label>Aylanish tezligi ω₁: <b id="speedv"></b><input id="speed" type="range" min=".3" max="3" step=".1" value="${params.speed}"></label><label>Uzatma turi<select id="drive"><option value="gear">Tishli g‘ildiraklar</option><option value="belt">Kamarli uzatma</option></select></label>`;
+if(topic==='6')html=`<label>Boshlang‘ich tezlik v₀: <b id="v0v"></b> m/s<input id="v0" type="range" min="5" max="35" value="${params.v0}"></label><label>Balandlik h: <b id="hv"></b> m<input id="h" type="range" min="2" max="30" value="${params.h}"></label><label>Gravitatsiya g: <b id="gv"></b> m/s²<input id="g" type="range" min="1" max="15" step=".1" value="${params.g}"></label>`;
+if(topic==='7')html=`<label>Boshlang‘ich tezlik v₀: <b id="v0v"></b> m/s<input id="v0" type="range" min="5" max="40" value="${params.v0}"></label><label>Otilish burchagi α: <b id="anglev"></b>°<input id="angle" type="range" min="5" max="85" value="${params.angle}"></label><label>Gravitatsiya g: <b id="gv"></b> m/s²<input id="g" type="range" min="1" max="15" step=".1" value="${params.g}"></label>`;
+$('controls').innerHTML=html;
+Object.keys(params).forEach(k=>{let el=$(k);if(el){el.value=params[k];el.addEventListener('input',()=>{params[k]=el.type==='range'?Number(el.value):el.value;updateLabels();draw()})}});
+updateLabels();
+}
+function updateLabels(){for(let [id,k] of [['r1v','r1'],['r2v','r2'],['speedv','speed'],['v0v','v0'],['hv','h'],['gv','g'],['anglev','angle']]){let el=$(id);if(el)el.textContent=params[k]}}
+function txt(s,x,y,color='#18324a',size=16){ctx.fillStyle=color;ctx.font=`bold ${size}px Arial`;ctx.fillText(s,x,y)}
+function line(x1,y1,x2,y2,color='#52677e',w=2,dash=[]){ctx.beginPath();ctx.setLineDash(dash);ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.stroke();ctx.setLineDash([])}
+function ball(x,y){ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fillStyle='#f97316';ctx.fill();ctx.strokeStyle='#9a3412';ctx.lineWidth=2;ctx.stroke()}
+function draw(){
+ctx.clearRect(0,0,800,360);
+if(topic==='5'){
+let r1=params.r1,r2=params.r2,x1=255,y=165,x2=params.drive==='belt'?510:255+r1+r2+8;
+if(params.drive==='belt'){ctx.beginPath();ctx.ellipse((x1+x2)/2,y,(x2-x1)/2,r1+7,0,0,Math.PI*2);ctx.strokeStyle='#657c91';ctx.lineWidth=6;ctx.stroke()}
+function gear(x,r,a,color){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.beginPath();for(let i=0;i<48;i++){let ang=i*Math.PI/24,rr=r*(i%2===0?1:.87),xx=Math.cos(ang)*rr,yy=Math.sin(ang)*rr;i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#174a7e';ctx.lineWidth=2;ctx.stroke();ctx.beginPath();ctx.arc(0,0,r*.18,0,Math.PI*2);ctx.fillStyle='#eaf5ff';ctx.fill();ctx.restore()}
+gear(x1,r1,t*params.speed,'#398bd0');gear(x2,r2,t*params.speed*(params.drive==='belt'?r1/r2:-r1/r2),'#f5ad36');
+txt(params.drive==='belt'?'Kamarli uzatma':'Tishli g‘ildiraklar',285,40,'#174a7e',21);
+$('results').innerHTML=`Birinchi aylanish tezligi: ω₁ = ${params.speed.toFixed(2)} shartli birlik<br>Ikkinchi tezlik moduli: ω₂ = ${(params.speed*r1/r2).toFixed(2)} shartli birlik<br>${params.drive==='belt'?'Kamarli uzatmada g‘ildiraklar bir yo‘nalishda aylanadi.':'Tishli g‘ildiraklar qarama-qarshi yo‘nalishda aylanadi.'}`;
+$('formulas').textContent='Kamar sirpanmasa: ω₁r₁ = ω₂r₂. Demak, ω₂ = ω₁r₁/r₂.';
+$('steps').textContent='1. Yetakchi g‘ildirak aylanadi. 2. Harakat kamar yoki tishlar orqali uzatiladi. 3. Radiuslar nisbatiga ko‘ra aylanish tezliklari farqlanadi.';
+}else{
+let horizontal=topic==='6',v0=params.v0,g=params.g,alpha=horizontal?0:params.angle*Math.PI/180,h=horizontal?params.h:0,vx=v0*Math.cos(alpha),vy=v0*Math.sin(alpha),T=horizontal?Math.sqrt(2*h/g):2*vy/g,L=horizontal?v0*T:vx*T,H=horizontal?h:vy*vy/(2*g);
+let ox=55,ground=310,scaleX=690/Math.max(L,1),scaleY=235/Math.max(horizontal?h:H,1);scaleX=Math.min(scaleX,24);scaleY=Math.min(scaleY,24);
+let oy=horizontal?ground-h*scaleY:ground;
+line(35,ground,770,ground,'#47734c',4);
+if(horizontal){ctx.fillStyle='#b58b60';ctx.fillRect(35,oy,20,ground-oy);ctx.fillStyle='#62b76a';ctx.fillRect(35,oy-5,95,6)}else{ctx.fillStyle='#b58b60';ctx.fillRect(35,ground-12,42,12);ctx.fillStyle='#62b76a';ctx.fillRect(35,ground-18,42,7)}
+let points=[];for(let tt=0;tt<=T;tt+=Math.max(T/150,.005)){let x=horizontal?v0*tt:vx*tt,y=horizontal?h-g*tt*tt/2:vy*tt-g*tt*tt/2;points.push([ox+x*scaleX,ground-y*scaleY])}
+ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.strokeStyle='#dc2626';ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.stroke();ctx.setLineDash([]);
+let elapsed=running?(t%Math.max(T,.01)):Math.min(t,T),x=horizontal?v0*elapsed:vx*elapsed,y=horizontal?h-g*elapsed*elapsed/2:vy*elapsed-g*elapsed*elapsed/2;y=Math.max(0,y);ball(ox+x*scaleX,ground-y*scaleY);
+if(horizontal){line(ox,oy,ox+65,oy,'#2563eb',3);txt('v₀',ox+70,oy-8,'#1d4ed8')}else{line(ox,ground,ox+60*Math.cos(alpha),ground-60*Math.sin(alpha),'#2563eb',3);txt('α = '+params.angle+'°',ox+65,ground-55,'#1d4ed8')}
+$('results').innerHTML=`Uchish vaqti: <b>${T.toFixed(2)} s</b><br>Gorizontal masofa: <b>${L.toFixed(2)} m</b><br>Maksimal balandlik: <b>${H.toFixed(2)} m</b><br>Gorizontal tezlik: ${(horizontal?v0:vx).toFixed(2)} m/s`;
+$('formulas').textContent=horizontal?'x = v₀t; h = gt²/2; t = √(2h/g); L = v₀√(2h/g).':'vₓ = v₀ cos α; vᵧ = v₀ sin α − gt; H = v₀² sin² α/(2g); T = 2v₀ sin α/g; L = v₀² sin(2α)/g.';
+$('steps').textContent=horizontal?'1. Jism gorizontal otiladi. 2. Gorizontal tezlik doimiy qoladi. 3. Vertikal tezlik gravitatsiya sabab ortadi. 4. Jism yerga tushadi.':'1. Jism burchak ostida otiladi. 2. Ko‘tarilish davomida vertikal tezlik kamayadi. 3. Eng yuqori nuqtada vertikal tezlik nol bo‘ladi. 4. Jism pastga tushadi.';
+}
+}
+function configure(next){topic=next;document.querySelectorAll('[data-topic]').forEach(b=>b.classList.toggle('active',b.dataset.topic===topic));$('title').textContent=topic==='5'?'Aylanma va ilgarilanma harakatni o‘zaro uzatish':topic==='6'?'Gorizontal otilgan jism harakati':'Gorizontga qiya otilgan jism harakati';$('desc').textContent=topic==='5'?'Radius va aylanish tezligini o‘zgartirib, g‘ildiraklar harakatini kuzating.':topic==='6'?'Tezlik, balandlik va gravitatsiyani o‘zgartirib, trayektoriyani kuzating.':'Boshlang‘ich tezlik, otilish burchagi va gravitatsiyani o‘zgartiring.';makeControls();$('prompt').textContent=prompts[topic];t=0;draw()}
+document.querySelectorAll('[data-topic]').forEach(b=>b.addEventListener('click',()=>{running=false;configure(b.dataset.topic)}));
+$('play').addEventListener('click',()=>{running=true});$('pause').addEventListener('click',()=>{running=false;draw()});$('reset').addEventListener('click',()=>{t=0;running=false;draw()});
+function loop(now){if(running&&last)t+=Math.min((now-last)/1000,.05);last=now;draw();raf=requestAnimationFrame(loop)}
+configure('5');running=true;raf=requestAnimationFrame(loop);
+})();
+</script></body></html>

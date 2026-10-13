@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jismning qiya tekislikdagi harakati</title>
+<style>
+:root{--bg:#eef3f7;--card:#fff;--ink:#16232e;--mute:#556472;--line:#c7d3dd;--slope:#c9d8e6;--acc:#1f5f8b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181f;--card:#17232d;--ink:#e6edf3;--mute:#93a4b3;--line:#2b3b48;--slope:#26394a;--acc:#6db3e3}}
+:root[data-theme="dark"]{--bg:#10181f;--card:#17232d;--ink:#e6edf3;--mute:#93a4b3;--line:#2b3b48;--slope:#26394a;--acc:#6db3e3}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;line-height:1.2;margin:8px 0 4px}
+h2{font-size:1.2rem;margin:0 0 8px}
+p{margin:6px 0}.sub{color:var(--mute);margin:0 0 12px}
+nav{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px}
+nav button{flex:1 0 auto;padding:10px 12px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;font:inherit;font-size:.9rem;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--acc);color:#fff;border-color:var(--acc)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+section{display:none}section.on{display:block}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:12px}
+.f{font-family:Georgia,serif;font-size:1.05rem;background:var(--bg);padding:6px 10px;border-radius:6px;margin:6px 0;overflow-x:auto;white-space:nowrap}
+canvas{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:8px}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin:10px 0}
+.ctl label{display:block;font-size:.9rem}
+.ctl input[type=range]{width:100%}
+.ctl select{width:100%;padding:6px;font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.row button{padding:10px 16px;border-radius:8px;border:0;font:inherit;font-weight:600;color:#fff;cursor:pointer}
+.go{background:#2f8f4e}.stop{background:#c77b12}.rs{background:#7a5cc4}
+.vals{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;font-size:.92rem}
+.vals span{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.k1{color:#d33}.k2{color:#2a9d4a}.k3{color:#2b6fd6}.k4{color:#d9821a}.k5{color:#8a4bd0}
+.graphs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+table{width:100%;border-collapse:collapse;margin-top:8px}td,th{border:1px solid var(--line);padding:6px 8px;text-align:left}
+.msg{font-weight:600;color:#c77b12;min-height:1.5em}
+@media(max-width:520px){.ctl,.graphs{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<h1>Jismning qiya tekislikdagi harakati</h1>
+<p class="sub">10-sinf fizika · g = 9,8 m/s²</p>
+<nav role="tablist">
+<button role="tab" aria-selected="true" data-t="s1">1. Og'irlik kuchi tashkil etuvchilari</button>
+<button role="tab" aria-selected="false" data-t="s2">2. Ishqalanish kuchi</button>
+<button role="tab" aria-selected="false" data-t="s3">3. Pastga harakat</button>
+</nav>
+
+<section id="s1" class="on">
+<div class="box">
+<h2>Og'irlik kuchini ikkiga ajratamiz</h2>
+<p>Qiya tekislikda mg kuchi vertikal pastga yo'nalgan. Uni tekislikka parallel va perpendikulyar ikki tashkil etuvchiga ajratamiz. Mg va tekislikka perpendikulyar orasidagi burchak tekislik burchagi α ga teng (tomonlari o'zaro perpendikulyar burchaklar).</p>
+<div class="f">F∥ = mg·sinα &nbsp; (jismni pastga tortadi)</div>
+<div class="f">F⊥ = mg·cosα &nbsp; (tekislikka bosadi), N = mg·cosα</div>
+<p><b>Misol.</b> m = 5 kg, α = 30°. mg = 49 N, F∥ = 49·0,5 = 24,5 N, F⊥ = 49·0,866 ≈ 42,4 N.</p>
+</div>
+<canvas id="c1" width="640" height="340"></canvas>
+<div class="ctl">
+<label>Burchak α: <b id="o1a">30</b>°<input type="range" id="a1" min="0" max="90" value="30"></label>
+<label>Massa m: <b id="o1m">5</b> kg<input type="range" id="m1" min="1" max="20" value="5"></label>
+</div>
+<div class="vals" id="v1"></div>
+</section>
+
+<section id="s2">
+<div class="box">
+<h2>Qiya tekislikda ishqalanish kuchi</h2>
+<p>Ishqalanish kuchi jism harakatiga (yoki harakat tomon intilishiga) qarama-qarshi, tekislik bo'ylab yuqoriga yo'naladi. U bosim kuchi N ga bog'liq.</p>
+<div class="f">N = mg·cosα</div>
+<div class="f">F_ish = μ·N = μ·mg·cosα</div>
+<p>α oshsa, cosα kamayadi, demak ishqalanish kuchi ham kamayadi. Jism qachon tinch turadi?</p>
+<div class="f">mg·sinα ≤ μ·mg·cosα &nbsp;⇒&nbsp; tgα ≤ μ</div>
+<p>Bu holda ishqalanish kuchi mg·sinα ga teng bo'lib, jism sirpanmaydi. tgα &gt; μ bo'lsa jism pastga sirpanadi va F_ish = μ·mg·cosα.</p>
+<p><b>Misol.</b> m = 2 kg, α = 30°, μ = 0,3. N = 2·9,8·0,866 ≈ 17 N; F_ish = 0,3·17 ≈ 5,1 N. mg·sinα = 9,8 N &gt; 5,1 N, demak jism sirpanadi. (tg30° ≈ 0,58 &gt; 0,3 — mos.)</p>
+<p><b>Mustaqil masala.</b> μ = 0,5 bo'lsa, qanday α da jism sirpana boshlaydi? (Javob: α ≈ 26,6°)</p>
+</div>
+</section>
+
+<section id="s3">
+<div class="box">
+<h2>Jismning tekislik bo'ylab pastga harakati</h2>
+<p>Harakat yo'nalishidagi teng ta'sir etuvchi kuch: F = mg·sinα − μ·mg·cosα. Nyutonning II qonuniga ko'ra:</p>
+<div class="f">a = g(sinα − μ·cosα)</div>
+<div class="f">v = a·t &nbsp;&nbsp; s = a·t²/2</div>
+<p><b>Misol.</b> α = 30°, μ = 0,2, L = 4 m. a = 9,8(0,5 − 0,2·0,866) ≈ 3,2 m/s²; t = √(2L/a) ≈ 1,58 s; v = a·t ≈ 5,06 m/s.</p>
+</div>
+<canvas id="c2" width="640" height="340"></canvas>
+<div class="ctl">
+<label>Burchak α: <b id="o2a">30</b>°<input type="range" id="a2" min="1" max="90" value="30"></label>
+<label>Massa m: <b id="o2m">5</b> kg<input type="range" id="m2" min="1" max="20" value="5"></label>
+<label>Ishqalanish μ: <b id="o2u">0.20</b><input type="range" id="u2" min="0" max="1" step="0.01" value="0.2"></label>
+<label>Uzunlik L: <b id="o2l">4</b> m<input type="range" id="l2" min="1" max="10" step="0.5" value="4"></label>
+<label>Tezlik ko'rsatish<select id="sp"><option value="0.25">×0,25 (sekin)</option><option value="0.5" selected>×0,5</option><option value="1">×1 (real)</option></select></label>
+</div>
+<div class="row"><button class="go" id="go">Start</button><button class="stop" id="st">To'xtat</button><button class="rs" id="rs">Qayta boshlash</button></div>
+<div class="msg" id="msg"></div>
+<div class="vals" id="v2"></div>
+<div class="graphs"><canvas id="gv" width="320" height="220"></canvas><canvas id="gs" width="320" height="220"></canvas></div>
+<div id="res"></div>
+</section>
+</main>
+
+<script>
+const g=9.8,$=id=>document.getElementById(id);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const D=Math.PI/180;
+
+// Tablar
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));
+});
+
+// Strelka (vektor) chizish
+function arrow(c,x,y,dx,dy,col,txt,ox,oy){
+  const l=Math.hypot(dx,dy); if(l<3)return;
+  c.strokeStyle=c.fillStyle=col;c.lineWidth=3;
+  c.beginPath();c.moveTo(x,y);c.lineTo(x+dx,y+dy);c.stroke();
+  const a=Math.atan2(dy,dx),X=x+dx,Y=y+dy;
+  c.beginPath();c.moveTo(X,Y);c.lineTo(X-11*Math.cos(a-.4),Y-11*Math.sin(a-.4));c.lineTo(X-11*Math.cos(a+.4),Y-11*Math.sin(a+.4));c.closePath();c.fill();
+  c.font='600 14px system-ui';c.fillText(txt,X+(ox||0),Y+(oy||0));
+}
+// Tekislik va blok: dist = blokning pastki chekkadan masofasi (px)
+function scene(c,W,H,al,dist,Lpx){
+  const bx=W-40,by=H-30,tx=bx-Lpx*Math.cos(al),ty=by-Lpx*Math.sin(al);
+  c.clearRect(0,0,W,H);
+  c.fillStyle=css('--slope');c.beginPath();c.moveTo(bx,by);c.lineTo(tx,ty);c.lineTo(tx,by);c.closePath();c.fill();
+  c.strokeStyle=css('--ink');c.lineWidth=2;c.beginPath();c.moveTo(10,by);c.lineTo(W-10,by);c.moveTo(tx,ty);c.lineTo(bx,by);c.stroke();
+  const px=bx-dist*Math.cos(al),py=by-dist*Math.sin(al);
+  c.save();c.translate(px,py);c.rotate(al);
+  c.fillStyle='#e0a030';c.strokeStyle=css('--ink');c.fillRect(-25,-50,50,50);c.strokeRect(-25,-50,50,50);c.restore();
+  return {cx:px+25*Math.sin(al),cy:py-25*Math.cos(al),bx,by};
+}
+function arc(c,x,y,r,a0,a1,txt,tx,ty){
+  c.strokeStyle=css('--ink');c.lineWidth=1.5;c.beginPath();c.arc(x,y,r,a0,a1);c.stroke();
+  c.fillStyle=css('--ink');c.font='italic 15px Georgia,serif';c.fillText(txt,tx,ty);
+}
+
+// ---------- 1-simulyatsiya ----------
+function draw1(){
+  const al=$('a1').value*D,m=+$('m1').value,W=640,H=340,c=$('c1').getContext('2d');
+  $('o1a').textContent=$('a1').value;$('o1m').textContent=m;
+  const s=Math.sin(al),co=Math.cos(al),mg=m*g,k=110/mg;
+  const S=scene(c,W,H,al,230,380),x=S.cx,y=S.cy;
+  arrow(c,x,y,0,110,'#d33','mg',6,14);
+  arrow(c,x,y,co*110*s,s*110*s,'#2a9d4a','F∥',6,14);
+  arrow(c,x,y,-s*110*co,co*110*co,'#2b6fd6','F⊥',-30,14);
+  arrow(c,x,y,s*110*co,-co*110*co,'#d9821a','N',6,-6);
+  // burchak tengligi
+  arc(c,S.bx,S.by,45,Math.PI,Math.PI+al,'α',S.bx-70,S.by-10);
+  arc(c,x,y,32,Math.PI/2,Math.PI/2+al,'α',x-30,y+55);
+  c.setLineDash([4,4]);c.strokeStyle='#888';c.lineWidth=1;
+  c.beginPath();c.moveTo(x+co*110*s,y+s*110*s);c.lineTo(x,y+110);c.lineTo(x-s*110*co,y+co*110*co);c.stroke();c.setLineDash([]);
+  $('v1').innerHTML=`<span class="k1">mg = ${mg.toFixed(1)} N</span><span class="k2">F∥ = mg·sinα = ${(mg*s).toFixed(1)} N</span><span class="k3">F⊥ = mg·cosα = ${(mg*co).toFixed(1)} N</span><span class="k4">N = ${(mg*co).toFixed(1)} N</span>`;
+}
+['a1','m1'].forEach(i=>$(i).oninput=draw1);
+
+// ---------- 2-simulyatsiya ----------
+let st={t:0,s:0,run:false,pts:[],last:0,done:false},raf=0;
+function par(){
+  const al=$('a2').value*D,m=+$('m2').value,u=+$('u2').value,L=+$('l2').value;
+  const moves=Math.tan(al)>u+1e-9||$('a2').value==90;
+  const a=moves?g*(Math.sin(al)-u*Math.cos(al)):0;
+  return {al,m,u,L,a,moves};
+}
+function draw2(){
+  const p=par(),c=$('c2').getContext('2d'),W=640,H=340;
+  $('o2a').textContent=$('a2').value;$('o2m').textContent=p.m;$('o2u').textContent=p.u.toFixed(2);$('o2l').textContent=p.L;
+  const s=Math.sin(p.al),co=Math.cos(p.al),Lpx=Math.min(420,250/Math.max(s,.01));
+  const dist=Math.max(0,Lpx*(1-st.s/p.L)),S=scene(c,W,H,p.al,dist,Lpx),x=S.cx,y=S.cy;
+  const mg=p.m*g,k=85/mg,N=mg*co;
+  const fr=p.moves?p.u*N:Math.min(p.u*N,mg*s),net=p.m*p.a;
+  arrow(c,x,y,0,mg*k,'#d33','mg',6,14);
+  arrow(c,x,y,s*N*k,-co*N*k,'#d9821a','N',6,-6);
+  arrow(c,x,y,-co*fr*k,-s*fr*k,'#2b6fd6','F_ish',-52,-6);
+  arrow(c,x,y,co*net*k,s*net*k,'#8a4bd0','F',8,14);
+  const v=p.a*st.t;
+  $('v2').innerHTML=`<span>t = ${st.t.toFixed(2)} s</span><span>a = ${p.a.toFixed(2)} m/s²</span><span>v = ${v.toFixed(2)} m/s</span><span>s = ${st.s.toFixed(2)} m</span><span class="k3">F_ish = ${fr.toFixed(1)} N</span><span class="k5">F (teng ta'sir) = ${net.toFixed(1)} N</span>`;
+  $('msg').textContent=p.moves?'':`Jism tinch holatda: tgα = ${Math.tan(p.al).toFixed(2)} ≤ μ = ${p.u.toFixed(2)}`;
+  graphs(p);
+}
+function graphs(p){
+  const T=p.moves?Math.sqrt(2*p.L/p.a):1,Vm=p.moves?p.a*T:1;
+  gr($('gv'),'v–t grafik (v, m/s)',T,Vm,st.pts.map(q=>[q[0],q[1]]),'#2b6fd6');
+  gr($('gs'),'s–t grafik (s, m)',T,p.L,st.pts.map(q=>[q[0],q[2]]),'#2a9d4a');
+}
+function gr(cv,title,T,Y,pts,col){
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height,l=38,b=28;
+  c.clearRect(0,0,W,H);c.fillStyle=css('--ink');c.font='13px system-ui';c.fillText(title,l,14);
+  c.strokeStyle=css('--mute');c.lineWidth=1;c.beginPath();c.moveTo(l,22);c.lineTo(l,H-b);c.lineTo(W-8,H-b);c.stroke();
+  c.fillText(Y.toFixed(1),2,32);c.fillText(T.toFixed(1)+' s',W-44,H-10);c.fillText('0',l-10,H-b+14);
+  c.strokeStyle=col;c.lineWidth=2.5;c.beginPath();
+  pts.forEach((q,i)=>{const X=l+(q[0]/T)*(W-l-8),Yp=H-b-(q[1]/Y)*(H-b-24);i?c.lineTo(X,Yp):c.moveTo(X,Yp)});c.stroke();
+}
+function reset(){cancelAnimationFrame(raf);st={t:0,s:0,run:false,pts:[[0,0,0]],last:0,done:false};$('res').innerHTML='';draw2();}
+function tick(now){
+  if(!st.run)return;
+  const p=par(),dt=Math.min(.05,(now-st.last)/1000)*$('sp').value;st.last=now;
+  st.t+=dt;st.s=.5*p.a*st.t*st.t;
+  if(st.s>=p.L){st.s=p.L;st.t=Math.sqrt(2*p.L/p.a);st.run=false;st.done=true;}
+  st.pts.push([st.t,p.a*st.t,st.s]);draw2();
+  if(st.done){$('res').innerHTML=`<table><tr><th>Natija</th><th>Qiymat</th></tr><tr><td>Tezlanish a</td><td>${p.a.toFixed(2)} m/s²</td></tr><tr><td>Yo'l s</td><td>${p.L} m</td></tr><tr><td>Vaqt t</td><td>${st.t.toFixed(2)} s</td></tr><tr><td>Oxirgi tezlik v</td><td>${(p.a*st.t).toFixed(2)} m/s</td></tr></table>`;return;}
+  raf=requestAnimationFrame(tick);
+}
+$('go').onclick=()=>{
+  const p=par();if(!p.moves){draw2();return;}
+  if(st.done)reset();
+  if(st.run)return;st.run=true;st.last=performance.now();raf=requestAnimationFrame(tick);
+};
+$('st').onclick=()=>{st.run=false;};
+$('rs').onclick=reset;
+['a2','m2','u2','l2'].forEach(i=>$(i).oninput=reset);
+draw1();reset();
+matchMedia('(prefers-color-scheme: dark)').onchange=()=>{draw1();draw2();};
+</script>
+</body>
+</html>
